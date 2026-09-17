@@ -1,4 +1,4 @@
-// Identificação automática por máquina
+// 1. Identificação do operador por máquina (salva no navegador)
 let NOME_OPERADOR = localStorage.getItem("OPERADOR_NOME");
 if (!NOME_OPERADOR) {
   NOME_OPERADOR = prompt("Identificação do Operador (Digite seu nome ou matrícula):");
@@ -11,6 +11,7 @@ if (!NOME_OPERADOR) {
 
 const BASE_FIRESTORE_URL = "https://firestore.googleapis.com/v1/projects/cofre-wpp/databases/(default)/documents/conversas_completas";
 
+// 2. Identificação limpa do contato
 function obterIdentificadorCliente() {
   try {
     const headerTitle = document.querySelector('header [role="button"] span[title]');
@@ -40,6 +41,7 @@ function obterIdentificadorCliente() {
 
 let sincronizando = false;
 
+// 3. Captura e envio para o Firestore
 async function sincronizarConversaCompleta() {
   if (sincronizando) return;
   sincronizando = true;
@@ -76,7 +78,7 @@ async function sincronizarConversaCompleta() {
       let texto = elemTexto ? (elemTexto.innerText || '') : '';
 
       if (texto && texto.trim().length > 0 && !/^\d{1,2}:\d{2}$/.test(texto.trim())) {
-        // Marcador estrutural nativo do WhatsApp (status de envio)
+        // Marcador estrutural nativo do WhatsApp (status de envio da mensagem)
         const isOperador = !!(
           balao.querySelector('span[data-icon*="check"]') ||
           balao.querySelector('span[data-icon*="time"]') ||
@@ -100,6 +102,7 @@ async function sincronizarConversaCompleta() {
     });
 
     if (listaFormatada.length > 0) {
+      // Cria o identificador único separando operador e cliente
       const idLimpo = `${NOME_OPERADOR}_${cliente}`.replace(/[\/\\#? ]/g, '_').trim();
       const clienteDocId = encodeURIComponent(idLimpo || 'Desconhecido');
       const urlDoc = `${BASE_FIRESTORE_URL}/${clienteDocId}`;
@@ -130,6 +133,7 @@ async function sincronizarConversaCompleta() {
   }
 }
 
+// 4. Observador de mudanças no chat
 const observer = new MutationObserver(() => {
   sincronizarConversaCompleta();
 });
