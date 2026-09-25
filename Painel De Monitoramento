@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Torre de Controle & Monitoria — Pravaler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --pravaler-yellow: #FFCB05;
+      --pravaler-yellow-hover: #E5B600;
+      --pravaler-yellow-light: #FFF9E6;
+      --pravaler-navy: #0F172A;
+      --pravaler-navy-light: #1E293B;
+      --pravaler-blue: #0056B3;
+      --pravaler-cyan: #00A3FF;
+      --pravaler-cyan-light: #EBF8FF;
+      
+      --bg: #F4F6F9;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --border-subtle: #F1F5F9;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --text-subtle: #94A3B8;
+      
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 24px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Top Bar Pravaler */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--pravaler-navy);
+      padding: 20px 28px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      color: #FFFFFF;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-bar::after {
+      content: "";
+      position: absolute;
+      top: 0; right: 0; width: 8px; height: 100%;
+      background: var(--pravaler-yellow);
+    }
+
+    .header-titles {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-logo-badge {
+      background: var(--pravaler-yellow);
+      color: var(--pravaler-navy);
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.04em;
+      padding: 8px 14px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-info h1 {
+      font-size: 19px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-info h1 span { color: var(--pravaler-yellow); }
+    .brand-info p { font-size: 13px; color: #94A3B8; margin-top: 3px; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* ABAS */
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      background: var(--surface);
+      padding: 8px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      width: fit-content;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .tab-btn:hover { background: var(--bg); color: var(--text-main); }
+    .tab-btn.active {
+      background: var(--pravaler-navy);
+      color: var(--pravaler-yellow);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15);
+    }
+
+    .tab-counter {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+    .tab-btn:not(.active) .tab-counter {
+      background: #E2E8F0;
+      color: #475569;
+    }
+
+    /* KPI Cards */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-left: 4px solid transparent;
+    }
+
+    .kpi-card.yellow-border { border-left-color: var(--pravaler-yellow); }
+    .kpi-card.green-border { border-left-color: #22C55E; }
+    .kpi-card.blue-border { border-left-color: var(--pravaler-cyan); }
+    .kpi-card.navy-border { border-left-color: var(--pravaler-navy); }
+
+    .kpi-meta span {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .kpi-meta h3 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-top: 4px;
+    }
+
+    .kpi-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Box Principal */
+    .main-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Filtros */
+    .filtros {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 210px;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.15s ease;
+    }
+
+    .input-wrapper input:focus {
+      background: #FFFFFF;
+      border-color: var(--pravaler-yellow-hover);
+      box-shadow: 0 0 0 3px rgba(255, 203, 5, 0.25);
+    }
+
+    input[type="date"], select.select-custom {
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    /* Botões */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .btn-pravaler-yellow {
+      background-color: var(--pravaler-yellow);
+      color: var(--pravaler-navy);
+      box-shadow: 0 2px 6px rgba(255, 203, 5, 0.3);
+    }
+    .btn-pravaler-yellow:hover { background-color: var(--pravaler-yellow-hover); }
+
+    .btn-excel { background-color: #107C41; color: white; }
+    .btn-excel:hover { background-color: #0C5C30; }
+
+    .btn-pdf {
+      background: var(--pravaler-navy);
+      color: var(--pravaler-yellow);
+      border: 1px solid rgba(255, 203, 5, 0.3);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-pdf:hover { background: var(--pravaler-yellow); color: var(--pravaler-navy); }
+
+    /* Tabela */
+    .table-container {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    thead th {
+      background: var(--pravaler-navy);
+      color: #F8FAFC;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--pravaler-yellow);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background-color 0.15s ease;
+    }
+
+    tbody tr:hover { background-color: #FFFDF5; }
+
+    tbody td {
+      padding: 12px 16px;
+      vertical-align: top;
+      color: var(--text-main);
+    }
+
+    .badge-op {
+      background: var(--pravaler-cyan-light);
+      color: var(--pravaler-navy);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid #BAE6FD;
+      white-space: nowrap;
+    }
+
+    .badge-tab {
+      background: var(--pravaler-yellow-light);
+      color: #854D0E;
+      border: 1px solid #FDE68A;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 11px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    .badge-msgs {
+      background: #F1F5F9;
+      color: var(--pravaler-navy);
+      border: 1px solid #E2E8F0;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 11px;
+      display: inline-block;
+    }
+
+    .resumo-card {
+      font-size: 12px;
+      color: #334155;
+      background: #F8FAFC;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border-left: 3px solid var(--pravaler-yellow);
+      line-height: 1.45;
+    }
+
+    .chat-preview {
+      max-height: 85px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      background: #F8FAFC;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #E2E8F0;
+      color: #334155;
+    }
+
+    /* BARRA DE PAGINAÇÃO */
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-pag {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--pravaler-navy);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s ease;
+    }
+
+    .btn-pag:hover:not(:disabled) {
+      background: var(--pravaler-yellow);
+      border-color: var(--pravaler-yellow-hover);
+    }
+
+    .btn-pag:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin: 0 8px;
+    }
+
+    /* GRID OPERADORES */
+    .operadores-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .op-full-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .op-full-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .op-full-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .op-full-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--pravaler-navy);
+      color: var(--pravaler-yellow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .status-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      text-transform: uppercase;
+    }
+    .pill-online { background: #DCFCE7; color: #15803D; }
+    .pill-ausente { background: var(--pravaler-yellow-light); color: #854D0E; }
+    .pill-offline { background: #FEE2E2; color: #B91C1C; }
+
+    .op-stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: #F8FAFC;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+    }
+    .op-stats-row strong { color: var(--pravaler-navy); display: block; font-size: 13px; }
+
+    .btn-filtrar-op {
+      background: #F1F5F9;
+      color: var(--pravaler-navy);
+      border: 1px solid #CBD5E1;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      font-family: inherit;
+    }
+    .btn-filtrar-op:hover {
+      background: var(--pravaler-yellow);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  
+  <header class="header-bar">
+    <div class="header-titles">
+      <div class="brand-logo-badge">P!</div>
+      <div class="brand-info">
+        <h1>Pravaler <span>•</span> Monitoria & Auditoria WPP</h1>
+        <p>Acompanhamento operacional de qualidade e compliance com integração à 2clix</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btnSincronizar" class="btn btn-pravaler-yellow" onclick="carregarTodasConversas()">🔄 Sincronizar Base</button>
+      <button class="btn btn-excel" onclick="exportarExcel()">📥 Exportar Excel (.xls)</button>
+    </div>
+  </header>
+
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="alternarAba('abaAtendimentos')">
+      💬 Atendimentos & Auditoria <span class="tab-counter" id="tabCountMsgs">0</span>
+    </button>
+    <button class="tab-btn" onclick="alternarAba('abaOperadores')">
+      👥 Gestão de Operadores <span class="tab-counter" id="tabCountOps">0</span>
+    </button>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card yellow-border">
+      <div class="kpi-meta">
+        <span>Total no Banco</span>
+        <h3 id="kpiTotal">0</h3>
+      </div>
+      <div class="kpi-icon" style="background:var(--pravaler-yellow-light); color:#854D0E;">💬</div>
+    </div>
+    <div class="kpi-card green-border">
+      <div class="kpi-meta">
+        <span>Operadores Conectados</span>
+        <h3 id="kpiOnline">0</h3>
+      </div>
+      <div class="kpi-icon" style="background:#DCFCE7; color:#15803D;">🟢</div>
+    </div>
+    <div class="kpi-card blue-border">
+      <div class="kpi-meta">
+        <span>Total de Operadores</span>
+        <h3 id="kpiTotalOps">0</h3>
+      </div>
+      <div class="kpi-icon" style="background:var(--pravaler-cyan-light); color:var(--pravaler-blue);">👥</div>
+    </div>
+    <div class="kpi-card navy-border">
+      <div class="kpi-meta">
+        <span>Ocorrências Tabuladas</span>
+        <h3 id="kpiTabulados">0</h3>
+      </div>
+      <div class="kpi-icon" style="background:#F1F5F9; color:var(--pravaler-navy);">📝</div>
+    </div>
+  </div>
+
+  <!-- ABA 1: ATENDIMENTOS -->
+  <div id="abaAtendimentos" class="tab-content active">
+    <main class="main-box">
+      <div class="filtros">
+        <div class="input-wrapper">
+          <input type="text" id="filtroOperador" placeholder="👤 Filtrar Operador..." oninput="aoMudarFiltro()">
+        </div>
+        <div class="input-wrapper">
+          <input type="text" id="filtroCliente" placeholder="🔍 Filtrar Estudante / Mensagem..." oninput="aoMudarFiltro()">
+        </div>
+        <div class="input-wrapper">
+          <input type="text" id="filtroTabulacao" placeholder="🏷️ Filtrar Tabulação..." oninput="aoMudarFiltro()">
+        </div>
+        <input type="date" id="filtroData" onchange="aoMudarFiltro()">
+        
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+          Exibir:
+          <select id="itensPorPagina" class="select-custom" onchange="mudarItensPorPagina()">
+            <option value="25" selected>25 por pág.</option>
+            <option value="50">50 por pág.</option>
+            <option value="100">100 por pág.</option>
+          </select>
+        </label>
+        
+        <span id="status" style="font-size:12px; color:var(--text-muted); margin-left:auto; font-weight:700;"></span>
+      </div>
+
+      <div class="table-container">
+        <table id="tabelaDados">
+          <thead>
+            <tr>
+              <th style="width: 80px; text-align: center;">2clix</th>
+              <th style="width: 105px;">Data</th>
+              <th style="width: 85px;">Horário</th>
+              <th style="width: 155px;">Operador</th>
+              <th style="width: 175px;">Estudante / Telefone</th>
+              <th style="width: 250px;">Tabulação & Observações</th>
+              <th style="width: 70px; text-align:center;">Msgs</th>
+              <th>Histórico Completo da Conversa</th>
+            </tr>
+          </thead>
+          <tbody id="corpoTabela">
+            <tr><td colspan="8" style="text-align:center; color:var(--text-subtle); padding: 32px;">A sincronizar base de monitoria...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- CONTROLES DE PAGINAÇÃO -->
+      <div class="pagination-bar">
+        <div id="paginacaoTexto" style="font-size: 12px; color: var(--text-muted); font-weight: 600;">
+          Exibindo 0 de 0 atendimentos
+        </div>
+        <div class="pagination-controls">
+          <button class="btn-pag" id="btnPrimeira" onclick="irParaPagina(1)">« Primeira</button>
+          <button class="btn-pag" id="btnAnterior" onclick="irParaPagina(paginaAtual - 1)">‹ Anterior</button>
+          <span class="page-info" id="indicadorPagina">Página 1 de 1</span>
+          <button class="btn-pag" id="btnProxima" onclick="irParaPagina(paginaAtual + 1)">Próxima ›</button>
+          <button class="btn-pag" id="btnUltima" onclick="irParaPagina(totalPaginas)">Última »</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ABA 2: OPERADORES -->
+  <div id="abaOperadores" class="tab-content">
+    <main class="main-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div>
+          <h2 style="font-size: 16px; font-weight: 800; color: var(--pravaler-navy);">Equipe de Atendimento — Presença & Volume</h2>
+          <p style="font-size: 12px; color: var(--text-muted);">Visualize todos os operadores ativos na base, sinal de vida e status em tempo real.</p>
+        </div>
+        <button class="btn btn-pravaler-yellow" onclick="carregarStatusOperadores()">🔄 Atualizar Status</button>
+      </div>
+
+      <div class="operadores-cards-grid" id="todosOperadoresGrid">
+        <span style="color: var(--text-subtle); font-size: 12px;">A carregar operadores...</span>
+      </div>
+    </main>
+  </div>
+
+</div>
+
+<script>
+  let registrosCarregados = [];
+  let listaFiltradaCache = [];
+  let mapaPresencaOperadores = new Map();
+
+  // CONTROLE DE PAGINAÇÃO
+  let paginaAtual = 1;
+  let tamanhoPagina = 25;
+  let totalPaginas = 1;
+
+  function alternarAba(abaId) {
+    document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+    
+    document.getElementById(abaId).classList.add("active");
+    event.currentTarget.classList.add("active");
+  }
+
+  function extrairTextoCampo(campo) {
+    if (!campo) return "";
+    return campo.stringValue || campo.integerValue || "";
+  }
+
+  function extrairMensagens(f) {
+    const campoMsgs = f.historico_conversa || f.mensagens;
+    if (!campoMsgs) return [];
+
+    if (campoMsgs.arrayValue && campoMsgs.arrayValue.values) {
+      return campoMsgs.arrayValue.values.map(v => v.stringValue || JSON.stringify(v));
+    }
+    if (campoMsgs.stringValue) {
+      return campoMsgs.stringValue.split("\n").filter(l => l.trim().length > 0);
+    }
+    return [];
+  }
+
+  function descobrirOperador(f, docName, msgs) {
+    let op = extrairTextoCampo(f.operador_responsavel) || 
+             extrairTextoCampo(f.operadorResponsavel) || 
+             extrairTextoCampo(f.operador);
+
+    if (op && op.trim() !== "") return op.trim();
+
+    const docId = docName ? docName.split("/").pop() : "";
+    const partes = docId.split("_");
+    if (partes.length >= 3) {
+      const candidato = decodeURIComponent(partes[1]);
+      if (candidato && isNaN(candidato) && candidato.length > 1) return candidato;
+    }
+
+    if (msgs && msgs.length > 0) {
+      const msgOp = msgs.find(m => m.startsWith("[") && !m.startsWith("[CLIENTE]") && !m.startsWith("[OPERADOR]"));
+      if (msgOp) {
+        const match = msgOp.match(/^\[(.*?)\]:/);
+        if (match && match[1]) return match[1].trim();
+      }
+    }
+    return "Operador";
+  }
+
+  async function carregarStatusOperadores() {
+    try {
+      const url = `https://firestore.googleapis.com/v1/projects/cofre-wpp/databases/(default)/documents/status_operadores`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      mapaPresencaOperadores.clear();
+
+      if (data.documents && data.documents.length > 0) {
+        data.documents.forEach(doc => {
+          const f = doc.fields || {};
+          const nome = extrairTextoCampo(f.operador) || doc.name.split("/").pop();
+          const timestamp = parseInt(extrairTextoCampo(f.ultimo_sinal_timestamp)) || 0;
+          const hora = extrairTextoCampo(f.ultimo_sinal_hora) || "-";
+          const dataSinal = extrairTextoCampo(f.data) || "-";
+          const clienteAtual = extrairTextoCampo(f.cliente_em_atendimento) || "Disponível";
+          const statusDeclarado = extrairTextoCampo(f.status);
+
+          mapaPresencaOperadores.set(nome.toLowerCase(), {
+            nomeOriginal: nome,
+            timestamp,
+            hora,
+            dataSinal,
+            clienteAtual,
+            statusDeclarado
+          });
+        });
+      }
+
+      renderizarGridTodosOperadores();
+    } catch (e) {
+      console.warn("Falha ao carregar status dos operadores:", e);
+    }
+  }
+
+  function renderizarGridTodosOperadores() {
+    const grid = document.getElementById("todosOperadoresGrid");
+    if (!grid) return;
+
+    const todosNomes = new Set();
+    const contagemAtendimentos = {};
+
+    registrosCarregados.forEach(r => {
+      const op = r.operador;
+      if (op && op !== "Operador") {
+        todosNomes.add(op);
+        contagemAtendimentos[op] = (contagemAtendimentos[op] || 0) + 1;
+      }
+    });
+
+    mapaPresencaOperadores.forEach((val) => {
+      todosNomes.add(val.nomeOriginal);
+    });
+
+    if (todosNomes.size === 0) {
+      grid.innerHTML = `<span style="color:var(--text-subtle); font-size:12px;">Nenhum operador encontrado na base.</span>`;
+      return;
+    }
+
+    const agora = Date.now();
+    let countOnline = 0;
+    grid.innerHTML = "";
+
+    const listaOrdenada = Array.from(todosNomes).sort();
+
+    listaOrdenada.forEach(nomeOp => {
+      const dadosPresenca = mapaPresencaOperadores.get(nomeOp.toLowerCase());
+      const totalAtendimentos = contagemAtendimentos[nomeOp] || 0;
+
+      let statusTexto = "Offline";
+      let statusClass = "pill-offline";
+      let icone = "🔴";
+      let chatAtual = "Nenhum chat aberto";
+
+      if (dadosPresenca) {
+        chatAtual = dadosPresenca.clienteAtual;
+        const diffMinutos = (agora - dadosPresenca.timestamp) / (1000 * 60);
+
+        if (dadosPresenca.statusDeclarado === "offline") {
+          statusTexto = "Offline";
+          statusClass = "pill-offline";
+          icone = "🔴";
+        } else if (diffMinutos <= 2.0) {
+          statusTexto = "Online";
+          statusClass = "pill-online";
+          icone = "🟢";
+          countOnline++;
+        } else if (diffMinutos <= 5.0) {
+          statusTexto = "Ausente";
+          statusClass = "pill-ausente";
+          icone = "🟡";
+        } else {
+          statusTexto = "Offline";
+          statusClass = "pill-offline";
+          icone = "🔴";
+        }
+      }
+
+      const inicial = nomeOp.charAt(0).toUpperCase();
+
+      const card = document.createElement("div");
+      card.className = "op-full-card";
+      card.innerHTML = `
+        <div class="op-full-header">
+          <div class="op-full-info">
+            <div class="op-full-avatar">${inicial}</div>
+            <div>
+              <strong style="color: var(--pravaler-navy); font-size: 14px;">${nomeOp}</strong>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                Chat: <strong>${chatAtual}</strong>
+              </div>
+            </div>
+          </div>
+          <span class="status-pill ${statusClass}">${icone} ${statusTexto}</span>
+        </div>
+
+        <div class="op-stats-row">
+          <div>
+            <span style="color: var(--text-muted);">Atendimentos:</span>
+            <strong>${totalAtendimentos} conversas</strong>
+          </div>
+          <div>
+            <span style="color: var(--text-muted);">Último Sinal:</span>
+            <strong>${dadosPresenca ? dadosPresenca.hora : 'Sem sinal'}</strong>
+          </div>
+        </div>
+
+        <button class="btn-filtrar-op" onclick="filtrarPeloOperador('${nomeOp}')">
+          🔍 Ver histórico deste operador
+        </button>
+      `;
+
+      grid.appendChild(card);
+    });
+
+    document.getElementById("kpiOnline").innerText = countOnline;
+    document.getElementById("kpiTotalOps").innerText = listaOrdenada.length;
+    document.getElementById("tabCountOps").innerText = listaOrdenada.length;
+  }
+
+  function filtrarPeloOperador(nomeOp) {
+    alternarAba('abaAtendimentos');
+    document.getElementById("filtroOperador").value = nomeOp;
+    aoMudarFiltro();
+  }
+
+  // --- SINCRONIZAÇÃO COMPLETA DE CONVERSAS ---
+  async function carregarTodasConversas() {
+    const status = document.getElementById("status");
+    const tbody = document.getElementById("corpoTabela");
+    const btn = document.getElementById("btnSincronizar");
+
+    btn.disabled = true;
+    btn.style.opacity = "0.7";
+    tbody.innerHTML = "<tr><td colspan='8' style='text-align:center; padding: 32px;'>A sincronizar atendimentos com o Firebase...</td></tr>";
+
+    let todosDocumentos = [];
+    let nextPageToken = "";
+    let pagina = 1;
+
+    try {
+      do {
+        status.innerText = `Lendo página ${pagina} (${todosDocumentos.length} baixadas)...`;
+
+        let url = `https://firestore.googleapis.com/v1/projects/cofre-wpp/databases/(default)/documents/conversas_completas?pageSize=300`;
+        if (nextPageToken) url += `&pageToken=${encodeURIComponent(nextPageToken)}`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.documents && data.documents.length > 0) {
+          todosDocumentos = todosDocumentos.concat(data.documents);
+        }
+
+        nextPageToken = data.nextPageToken || "";
+        pagina++;
+      } while (nextPageToken);
+
+      if (todosDocumentos.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='8' style='text-align:center; padding: 32px;'>Nenhum registo encontrado.</td></tr>";
+        status.innerText = "0 conversas.";
+        registrosCarregados = [];
+        return;
+      }
+
+      let tabuladosCount = 0;
+
+      registrosCarregados = todosDocumentos.map((doc, idx) => {
+        const f = doc.fields || {};
+        let msgs = extrairMensagens(f);
+
+        msgs = msgs.filter(m => !m.includes("criptografia de ponta a ponta"));
+
+        const cliente = extrairTextoCampo(f.cliente) || extrairTextoCampo(f.contato) || doc.name.split("/").pop();
+        const operador = descobrirOperador(f, doc.name, msgs);
+        const tabulacao = extrairTextoCampo(f.tabulacao);
+        const resumo = extrairTextoCampo(f.resumo_atendimento) || "";
+
+        if (tabulacao && tabulacao !== "Sem tabulação") tabuladosCount++;
+
+        let dataDoc = extrairTextoCampo(f.dataAuditoria) || extrairTextoCampo(f.data);
+        let horaDoc = extrairTextoCampo(f.horarioRegistro) || extrairTextoCampo(f.horario);
+        if (!dataDoc && doc.createTime) {
+          dataDoc = doc.createTime.split("T")[0];
+          horaDoc = doc.createTime.split("T")[1].slice(0, 8);
+        }
+
+        return {
+          id: idx,
+          data: dataDoc || "-",
+          horario: horaDoc || "-",
+          operador: operador,
+          cliente: cliente,
+          tabulacao: tabulacao || "Sem tabulação",
+          temTabulacaoReal: !!(tabulacao && tabulacao !== "Sem tabulação"),
+          resumo: resumo,
+          totalMsgs: msgs.length,
+          historico: msgs.join("\n")
+        };
+      });
+
+      registrosCarregados.sort((a, b) => `${b.data} ${b.horario}`.localeCompare(`${a.data} ${a.horario}`));
+
+      document.getElementById("kpiTotal").innerText = registrosCarregados.length;
+      document.getElementById("tabCountMsgs").innerText = registrosCarregados.length;
+      document.getElementById("kpiTabulados").innerText = tabuladosCount;
+
+      aoMudarFiltro();
+      carregarStatusOperadores();
+
+      status.innerText = `${registrosCarregados.length} atendimentos carregados.`;
+    } catch (e) {
+      console.error(e);
+      tbody.innerHTML = "<tr><td colspan='8' style='text-align:center; color:#EF4444; padding: 32px;'>Erro ao carregar dados do Firebase.</td></tr>";
+      status.innerText = "Erro na sincronização.";
+    } finally {
+      btn.disabled = false;
+      btn.style.opacity = "1";
+    }
+  }
+
+  // --- FILTRAGEM & CONTROLE DE PÁGINAS ---
+  function aoMudarFiltro() {
+    const termoOp = document.getElementById("filtroOperador").value.toLowerCase().trim();
+    const termoCli = document.getElementById("filtroCliente").value.toLowerCase().trim();
+    const termoTab = document.getElementById("filtroTabulacao").value.toLowerCase().trim();
+    const dataFiltro = document.getElementById("filtroData").value;
+
+    listaFiltradaCache = registrosCarregados.filter(r => {
+      const bateOp = termoOp ? r.operador.toLowerCase().includes(termoOp) : true;
+      const bateCli = termoCli ? (r.cliente.toLowerCase().includes(termoCli) || r.historico.toLowerCase().includes(termoCli) || r.resumo.toLowerCase().includes(termoCli)) : true;
+      const bateTab = termoTab ? r.tabulacao.toLowerCase().includes(termoTab) : true;
+      const bateData = dataFiltro ? r.data === dataFiltro : true;
+      return bateOp && bateCli && bateTab && bateData;
+    });
+
+    paginaAtual = 1;
+    atualizarPaginacaoERenderizar();
+  }
+
+  function mudarItensPorPagina() {
+    tamanhoPagina = parseInt(document.getElementById("itensPorPagina").value) || 25;
+    paginaAtual = 1;
+    atualizarPaginacaoERenderizar();
+  }
+
+  function irParaPagina(num) {
+    if (num < 1 || num > totalPaginas) return;
+    paginaAtual = num;
+    atualizarPaginacaoERenderizar();
+  }
+
+  function atualizarPaginacaoERenderizar() {
+    const totalItens = listaFiltradaCache.length;
+    totalPaginas = Math.ceil(totalItens / tamanhoPagina) || 1;
+
+    if (paginaAtual > totalPaginas) paginaAtual = totalPaginas;
+
+    const inicio = (paginaAtual - 1) * tamanhoPagina;
+    const fim = Math.min(inicio + tamanhoPagina, totalItens);
+    const paginaItens = listaFiltradaCache.slice(inicio, fim);
+
+    renderizarTabela(paginaItens);
+
+    // Atualiza controles visuais
+    document.getElementById("indicadorPagina").innerText = `Página ${paginaAtual} de ${totalPaginas}`;
+    document.getElementById("paginacaoTexto").innerText = totalItens === 0 
+      ? "Nenhum atendimento encontrado"
+      : `Exibindo ${inicio + 1}–${fim} de ${totalItens} atendimentos filtrados`;
+
+    document.getElementById("btnPrimeira").disabled = (paginaAtual === 1);
+    document.getElementById("btnAnterior").disabled = (paginaAtual === 1);
+    document.getElementById("btnProxima").disabled = (paginaAtual === totalPaginas || totalItens === 0);
+    document.getElementById("btnUltima").disabled = (paginaAtual === totalPaginas || totalItens === 0);
+
+    document.getElementById("status").innerText = `${totalItens} de ${registrosCarregados.length} encontrados.`;
+  }
+
+  function renderizarTabela(lista) {
+    const tbody = document.getElementById("corpoTabela");
+    tbody.innerHTML = "";
+
+    if (lista.length === 0) {
+      tbody.innerHTML = "<tr><td colspan='8' style='text-align:center; padding: 32px; color:var(--text-subtle);'>Nenhum atendimento corresponde aos filtros aplicados.</td></tr>";
+      return;
+    }
+
+    lista.forEach(item => {
+      const tr = document.createElement("tr");
+      
+      const tabulacaoHtml = item.temTabulacaoReal 
+        ? `<span class="badge-tab">${item.tabulacao}</span>`
+        : `<span style="color:#94A3B8; font-size:11px;">Sem tabulação</span>`;
+
+      const resumoHtml = item.resumo 
+        ? `<div class="resumo-card">${tabulacaoHtml}<br>${item.resumo}</div>`
+        : (item.temTabulacaoReal ? tabulacaoHtml : `<span style="color:#94A3B8; font-size:11px;">Sem observações</span>`);
+
+      tr.innerHTML = `
+        <td style="text-align: center;">
+          <button class="btn-pdf" title="Gerar Laudo para a 2clix" onclick="gerarPDFAtendimento(${item.id})">📄 PDF</button>
+        </td>
+        <td style="font-weight: 600; font-size: 12px;">${item.data}</td>
+        <td style="font-size: 12px; color: var(--text-muted);">${item.horario}</td>
+        <td><span class="badge-op">👤 ${item.operador}</span></td>
+        <td><strong style="color: var(--pravaler-navy);">${item.cliente}</strong></td>
+        <td>${resumoHtml}</td>
+        <td style="text-align:center;"><span class="badge-msgs">${item.totalMsgs}</span></td>
+        <td><div class="chat-preview">${item.historico || "<em>Sem mensagens</em>"}</div></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function gerarPDFAtendimento(id) {
+    const item = registrosCarregados.find(r => r.id === id);
+    if (!item) return;
+
+    const win = window.open("", "_blank", "width=850,height=900");
+    const linhas = (item.historico || "").split("\n").filter(l => l.trim().length > 0);
+
+    let htmlMensagens = "";
+    linhas.forEach(linha => {
+      const ehOperador = linha.includes("[OPERADOR") || linha.includes(`[${item.operador}]`);
+      const classe = ehOperador ? "msg-op" : "msg-cli";
+      const autor = ehOperador ? item.operador : "Estudante / Cliente";
+      let textoMsg = linha.replace(/^\[.*?\]:\s*/, "");
+      
+      htmlMensagens += `
+        <div class="msg-box ${classe}">
+          <div class="msg-meta">${autor}</div>
+          <div class="msg-text">${textoMsg.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+        </div>
+      `;
+    });
+
+    win.document.write(`
+      <!DOCTYPE html>
+      <html lang="pt-BR">
+      <head>
+        <meta charset="UTF-8">
+        <title>Auditoria Pravaler / 2clix — ${item.cliente} — ${item.data}</title>
+        <style>
+          @page { margin: 15mm; }
+          body { font-family: 'Montserrat', -apple-system, sans-serif; color: #0F172A; margin: 0; padding: 10px; font-size: 13px; }
+          .header-laudo { border-bottom: 3px solid #FFCB05; padding-bottom: 12px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: flex-end; }
+          .header-laudo h2 { margin: 0 0 4px 0; color: #0F172A; font-size: 18px; font-weight: 800; }
+          .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #F8FAFC; border: 1px solid #E2E8F0; padding: 14px; border-radius: 8px; margin-bottom: 16px; }
+          .info-item { font-size: 12px; }
+          .info-item strong { color: #64748B; }
+          .resumo-card { background: #FFF9E6; border: 1px solid #FDE68A; border-radius: 8px; padding: 12px; margin-bottom: 20px; }
+          .chat-container { display: flex; flex-direction: column; gap: 8px; }
+          .msg-box { max-width: 80%; padding: 9px 13px; border-radius: 8px; line-height: 1.45; }
+          .msg-op { align-self: flex-end; background: #FFF9E6; border: 1px solid #FDE68A; }
+          .msg-cli { align-self: flex-start; background: #F1F5F9; border: 1px solid #E2E8F0; }
+          .msg-meta { font-size: 10px; font-weight: 800; color: #0F172A; margin-bottom: 3px; }
+          .msg-text { font-size: 12px; white-space: pre-wrap; }
+          @media print { .no-print { display: none; } }
+        </style>
+      </head>
+      <body>
+        <div class="no-print" style="margin-bottom: 15px; text-align: right;">
+          <button onclick="window.print()" style="background:#0F172A; color:#FFCB05; border:none; padding:9px 18px; border-radius:6px; font-weight:800; cursor:pointer;">🖨️ Salvar como PDF / Imprimir</button>
+        </div>
+        <div class="header-laudo">
+          <div>
+            <h2>Laudo de Monitoria WhatsApp — Pravaler</h2>
+            <span style="color: #64748B; font-size: 11px;">Documento oficial para registro e compliance na plataforma 2clix</span>
+          </div>
+          <div style="text-align: right; font-size: 11px; color: #64748B;">Gerado em: ${new Date().toLocaleString("pt-BR")}</div>
+        </div>
+        <div class="info-grid">
+          <div class="info-item"><strong>Operador Responsável:</strong> ${item.operador}</div>
+          <div class="info-item"><strong>Data do Atendimento:</strong> ${item.data} às ${item.horario}</div>
+          <div class="info-item"><strong>Estudante / Telefone:</strong> ${item.cliente}</div>
+          <div class="info-item"><strong>Volume de Mensagens:</strong> ${item.totalMsgs} msgs</div>
+        </div>
+        ${item.resumo || item.temTabulacaoReal ? `
+          <div class="resumo-card">
+            <strong style="color:#854D0E; font-size:12px;">Tabulação:</strong> ${item.tabulacao}<br>
+            <strong style="color:#854D0E; font-size:12px;">Observações da Ocorrência:</strong> ${item.resumo || 'Sem observações adicionais.'}
+          </div>
+        ` : ""}
+        <div class="chat-container">
+          ${htmlMensagens || "<em>Nenhuma mensagem registrada.</em>"}
+        </div>
+      </body>
+      </html>
+    `);
+
+    win.document.close();
+    setTimeout(() => { win.focus(); win.print(); }, 400);
+  }
+
+  function exportarExcel() {
+    if (listaFiltradaCache.length === 0) {
+      alert("Nenhum atendimento disponível para exportar.");
+      return;
+    }
+
+    let tabelaHtml = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <style>
+          th { background-color: #0F172A; color: #FFCB05; font-weight: bold; border: 0.5pt solid #CBD5E1; text-align: left; }
+          td { border: 0.5pt solid #CBD5E1; vertical-align: top; mso-number-format:"\\@"; }
+          .chat-cell { white-space: pre-wrap; font-family: Calibri, sans-serif; font-size: 11pt; }
+        </style>
+      </head>
+      <body>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 100px;">Data</th>
+              <th style="width: 80px;">Horário</th>
+              <th style="width: 150px;">Operador Responsável</th>
+              <th style="width: 160px;">Estudante / Telefone</th>
+              <th style="width: 180px;">Motivo / Tabulação</th>
+              <th style="width: 250px;">Resumo da Ocorrência</th>
+              <th style="width: 80px; text-align: center;">Qtd Msgs</th>
+              <th style="width: 600px;">Histórico Completo da Conversa</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    // Exporta a lista filtrada COMPLETA (não apenas a página visível)
+    listaFiltradaCache.forEach(r => {
+      const clienteSanitizado = (r.cliente || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const operadorSanitizado = (r.operador || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const tabulacaoSanitizada = (r.tabulacao || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const resumoSanitizado = (r.resumo || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const chatSanitizado = (r.historico || "").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\r?\n/g, "<br style='mso-data-placement:same-cell;' />");
+
+      tabelaHtml += `
+        <tr>
+          <td>${r.data}</td>
+          <td>${r.horario}</td>
+          <td><b>${operadorSanitizado}</b></td>
+          <td>${clienteSanitizado}</td>
+          <td>${tabulacaoSanitizada}</td>
+          <td>${resumoSanitizado}</td>
+          <td style="text-align: center;">${r.totalMsgs}</td>
+          <td class="chat-cell">${chatSanitizado}</td>
+        </tr>
+      `;
+    });
+
+    tabelaHtml += `</tbody></table></body></html>`;
+
+    const blob = new Blob(["\uFEFF" + tabelaHtml], { type: "application/vnd.ms-excel;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const d = new Date();
+    const dataStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `monitoria_pravaler_${dataStr}.xls`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  carregarTodasConversas();
+  setInterval(carregarStatusOperadores, 30000);
+</script>
+
+</body>
+</html>
